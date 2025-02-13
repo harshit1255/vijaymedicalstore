@@ -1,11 +1,13 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const Product = require("./models/Product");
-
+const cors = require("cors");
 const app = express();
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
@@ -59,7 +61,11 @@ mongoose
 //     res.status(500).json({ error: error.message });
 //   }
 // });
+const adminRoutes = require("./routes/adminRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
+app.use("/admin", adminRoutes);
+app.use("/orders", orderRoutes);
 app.get("/api/products", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 10 } = req.query;
