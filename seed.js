@@ -1,49 +1,35 @@
 const mongoose = require("mongoose");
+const fs = require("fs");
 const Product = require("./models/Product");
 const { faker } = require("@faker-js/faker");
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/productsdb", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://hiiamharshit:1255H%40rshit@cluster0.tjjmu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
-// Generate an array of drug names
-const generateDrugNames = (count) => {
-  const drugs = [];
-  for (let i = 0; i < count; i++) {
-    drugs.push({
-      name: `${
-        faker.science.chemicalElement().name
-      } - ${faker.word.adjective()}`,
-      price: parseFloat((Math.random() * 100).toFixed(2)), // Random price between 0 and 100
-    });
-  }
-  return drugs;
-};
-
 // Seed the database
-const seedDatabase = async () => {
+const seedProducts = async () => {
   try {
-    // Clear the collection first
-    await Product.deleteMany({});
-    console.log("Existing data cleared.");
+    const data = fs.readFileSync("output.json", "utf8");
+    const products = JSON.parse(data);
 
-    // Generate 1000 products
-    const drugs = generateDrugNames(1000);
-
-    // Insert the products into the database
-    await Product.insertMany(drugs);
-    console.log("Database seeded with 1000 drug names.");
-    mongoose.disconnect();
+    // Insert products into MongoDB
+    await Product.insertMany(products);
+    console.log("Products seeded successfully!");
+    mongoose.connection.close();
   } catch (error) {
-    console.error("Error seeding the database:", error);
-    mongoose.disconnect();
+    console.error("Error seeding products:", error);
+    mongoose.connection.close();
   }
 };
 
 // Run the seed function
-seedDatabase();
+seedProducts();
