@@ -7,7 +7,14 @@ const cors = require("cors");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allows all origins (CHANGE THIS IF NEEDED)
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true, // Allow cookies/auth headers
+  })
+);
 app.options("*", cors());
 app.use(bodyParser.json());
 
