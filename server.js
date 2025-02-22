@@ -9,7 +9,11 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://vijaymedicalstore.netlify.app", // Allows all origins (CHANGE THIS IF NEEDED)
+    origin: [
+      "https://vijaymedicalstore.netlify.app",
+      "http://localhost:5173",
+      "http://192.168.29.64:5173",
+    ], // Allows all origins (CHANGE THIS IF NEEDED)
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type,Authorization",
     credentials: true, // Allow cookies/auth headers
