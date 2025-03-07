@@ -41,4 +41,31 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// ✅ Get Products with Pagination
+router.get("/paginated", async (req, res) => {
+  try {
+    let { page = 1, limit = 10 } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    const products = await Product.find()
+      .sort({ name: 1 }) // Sort alphabetically
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.json({
+      page,
+      limit,
+      totalProducts,
+      totalPages,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching products", error });
+  }
+});
+
 module.exports = router;
